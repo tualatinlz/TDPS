@@ -1,0 +1,5 @@
+-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\CORE -I..\FWlib\inc -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\USER -I..\HARDWARE\BUSMOTOR -I..\SYSTEM\usart -I..\HARDWARE\Timer -I..\HARDWARE\PS2 -I..\HARDWARE\Beep -I..\HARDWARE\Control_app -I..\HARDWARE\Servo -I..\HARDWARE\MOTOR -I..\HARDWARE\ADC -I..\HARDWARE\KEY -I..\HARDWARE\OLED 
+-I C:\Keil\ARM\RV31\INC 
+-I C:\Keil\ARM\CMSIS\Include 
+-I C:\Keil\ARM\Inc\ST\STM32F10x 
+-DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -o "..\Output\busmotor.o" --omf_browse "..\Output\busmotor.crf" --depend "..\Output\busmotor.d" "..\HARDWARE\BUSMOTOR\BusMotor.c"
