@@ -24,7 +24,7 @@ short int PS2_CH[3];
 unsigned char Control_Flag=0;		
 
 unsigned char Title_Strings[5][13]={
-"[Functions]\0",	"[ PS2 test ]\0",	"[BlueTooth]\0","[trail test]\0","[Ultrasonic]\0",
+"[Functions]\0",	"[ PS2 test ]\0",	"[UART]\0","[trail]\0","[Ultrasonic]\0",
 };
 
 unsigned char StandbyUI_String[3][6][7]={

@@ -1217,7 +1217,7 @@ Memory Map of the image
 
   Image Entry point : 0x08000131
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x0000a5f8, Max: 0x00040000, ABSOLUTE, COMPRESSED[0x0000a518])
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x0000a5f8, Max: 0x00040000, ABSOLUTE, COMPRESSED[0x0000a51c])
 
     Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x0000a404, Max: 0x00040000, ABSOLUTE)
 
@@ -1347,7 +1347,7 @@ Memory Map of the image
     0x0800a2f4   0x0800a2f4   0x00000110   Data   RO          919    locale$$data        c_w.l(lc_ctype_c.o)
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x0800a404, Size: 0x00000f38, Max: 0x0000c000, ABSOLUTE, COMPRESSED[0x00000114])
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x0800a404, Size: 0x00000f38, Max: 0x0000c000, ABSOLUTE, COMPRESSED[0x00000118])
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1383,39 +1383,39 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       396         16          0          0          0        939   adc.o
-       144          6          0          0          0        813   beep.o
-      1420        114          0         28        192       4564   control.o
-      1668        240          0         20          0       8575   control_app.o
+       396         16          0          0          0        935   adc.o
+       144          6          0          0          0        809   beep.o
+      1420        114          0         28        192       4544   control.o
+      1668        240          0         20          0       8559   control_app.o
          0          0          0          0          0       4532   core_cm3.o
-       180         16          0          0          0      16012   delay.o
-         0          0          0         16          0        562   encoder.o
-        84          8          0          0          0        445   exti.o
-        36          4          0          0          0        459   key.o
-         0          0          0          0          0       1732   led.o
-       284         42          0          0          0        615   main.o
-       220         22          0          0          0     249809   misc.o
-       632         44          0          0          0       1145   motor.o
-       672         16          0          0          0       2245   oled.o
-      4480         62      15844          0       1024      15009   oled_user.o
-       532         28          0         36          9       2479   ps2.o
-       888         78          0         42         32       2750   servor.o
-        64         26        304          0       1536        780   startup_stm32f10x_hd.o
-       860         38          0          0          0       5645   stm32f10x_gpio.o
-        64          4          0          0          0       1385   stm32f10x_it.o
-       932         36          0         20          0       8796   stm32f10x_rcc.o
-      3610         88          0          0          0      22752   stm32f10x_tim.o
-      1032         22          0          0          0       8364   stm32f10x_usart.o
-       708         50          0          0          0       2803   sys.o
-       480         38          0         20          0       1763   system_stm32f10x.o
-       288         18          0          0          0       1467   timer.o
-       172         14          0          0          0        699   traversing.o
-      1808         96          0        295          0       3046   ui.o
-       200         32          0          5          0       1031   uln.o
-       828         32          0         12        500       5615   usart.o
+       180         16          0          0          0      16000   delay.o
+         0          0          0         16          0        550   encoder.o
+        84          8          0          0          0        441   exti.o
+        36          4          0          0          0        455   key.o
+         0          0          0          0          0       1728   led.o
+       284         42          0          0          0        611   main.o
+       220         22          0          0          0     249777   misc.o
+       632         44          0          0          0       1137   motor.o
+       672         16          0          0          0       2241   oled.o
+      4480         62      15844          0       1024      14981   oled_user.o
+       532         28          0         36          9       2467   ps2.o
+       888         78          0         42         32       2734   servor.o
+        64         26        304          0       1536        772   startup_stm32f10x_hd.o
+       860         38          0          0          0       5633   stm32f10x_gpio.o
+        64          4          0          0          0       1381   stm32f10x_it.o
+       932         36          0         20          0       8776   stm32f10x_rcc.o
+      3610         88          0          0          0      22740   stm32f10x_tim.o
+      1032         22          0          0          0       8356   stm32f10x_usart.o
+       708         50          0          0          0       2791   sys.o
+       480         38          0         20          0       1751   system_stm32f10x.o
+       288         18          0          0          0       1463   timer.o
+       172         14          0          0          0        695   traversing.o
+      1808         96          0        295          0       3034   ui.o
+       200         32          0          5          0       1023   uln.o
+       828         32          0         12        500       5603   usart.o
 
     ----------------------------------------------------------------------
-     22684       1190      16182        500       3296     376831   Object Totals
+     22684       1190      16182        500       3296     376519   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          2          0          2          6          3          0   (incl. Padding)
 
@@ -1489,15 +1489,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     25534       1332      16454        500       3396     375635   Grand Totals
-     25534       1332      16454        276       3396     375635   ELF Image Totals (compressed)
-     25534       1332      16454        276          0          0   ROM Totals
+     25534       1332      16454        500       3396     375323   Grand Totals
+     25534       1332      16454        280       3396     375323   ELF Image Totals (compressed)
+     25534       1332      16454        280          0          0   ROM Totals
 
 ==============================================================================
 
     Total RO  Size (Code + RO Data)                41988 (  41.00kB)
     Total RW  Size (RW Data + ZI Data)              3896 (   3.80kB)
-    Total ROM Size (Code + RO Data + RW Data)      42264 (  41.27kB)
+    Total ROM Size (Code + RO Data + RW Data)      42268 (  41.28kB)
 
 ==============================================================================
 
