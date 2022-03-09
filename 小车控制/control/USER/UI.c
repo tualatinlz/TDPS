@@ -15,6 +15,7 @@
 unsigned short int Keytimes=0;				//按键按下时间计数
 unsigned char Kaysta=0;								//按键状态变量
 unsigned char WorkMode=0;							//工作模式变量
+unsigned int stage_ct=0;              // stage count 
 unsigned int Voltage=0;									//电池电压变量，单位0.1V
 char Menux=0;													//菜单变量
 unsigned char UI_Display_Flag=0;			//标记界面写入一次

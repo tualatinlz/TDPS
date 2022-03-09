@@ -102,8 +102,8 @@ void Ps2_Control(void)
 		PS2_CH[0]=	PS2_AnologData(PSS_RY);						
 		PS2_CH[1]=	PS2_AnologData(PSS_RX);
 		PS2_CH[2]=	PS2_AnologData(PSS_LX);
-		Car_Control((PS2_CH[1]-127)*3/5,(127-PS2_CH[0])*3/5,(PS2_CH[2]-127)/2);
-	  Set_Motor(Motor_Speed[0]*25, Motor_Speed[1]*25,Motor_Speed[2]*25,Motor_Speed[3]*25);
+		Car_Control((PS2_CH[1]-127)*3/5,(127-PS2_CH[0])*3/5,(PS2_CH[2]-127)/2);   //get motor speed in x,y,yaw
+	  Set_Motor(Motor_Speed[0]*25, Motor_Speed[1]*25,Motor_Speed[2]*25,Motor_Speed[3]*25); //then set motor speed
 		switch (key)
 		{
 			case PSB_PAD_DOWN:

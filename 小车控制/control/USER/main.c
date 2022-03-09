@@ -8,14 +8,14 @@ int main(void)
 {
 	Stm32_Clock_Init(9);//ÏµÍ³Ê±ÖÓÉèÖÃ
 	JTAG_Set(JTAG_SWD_DISABLE); //ÏÈ¹Ø±ÕJATG SWD¶Ë¿Ú¡£4Â·±àÂëÆ÷ÖÐ£¬ÐèÒªÕ¼ÓÃJTAG¶Ë¿ÚÖÐµÄ²¿·ÖÒý½Å
-	AFIO->MAPR|=0x1<<8;					//timer2²¿·ÖÖØÓ³Éä£¬CH1---PA15,CH2---PB3£¨½âÂë±àÂëÆ÷µÄ4¸ötimerÖÐÓÐ¹²ÓÃµÄÒý½Å£¬Òò´ËÒªÖØÓ³Éä£
+	AFIO->MAPR|=0x1<<8;					//timer2²¿·ÖÖØÓ³Éä£¬CH1---PA15,CH2---PB3£¨½âÂë±àÂëÆ÷µÄ4¸ötimerÖÐÓÐ¹²ÓÃµÄÒý½Å£¬Òò´ËÒªÖØÓ³Éä?
 //	JTAG_Set(SWD_ENABLE); 			//Ö»¿ªÆôSWD¶Ë¿Ú¡££¨±ØÐë¿ªÆô£¬²»È»¶Ïµçºó£¬ÎÞ·¨µ÷ÊÔ»òÏÂÔØ³ÌÐò¡£´ËÊ±ÉèÖÃBOOT0Îª¸ßµçÆ½²Å¿ÉÒÔ£©
-	//delay_init(72);			//ÑÓÊ±³õÊ¼»¯©
+	//delay_init(72);			//ÑÓÊ±³õÊ¼»¯?
 	Timer_Init();
 	Timer_ON();
 	//Uart_Init(1);	
 	Uart_Init(3);	  //CONNECT TO PB10
-	TIM6_Int_Init(5000,72);	  //5msÖÐ¶ÏÒç³ö   IN THE CONTROL.c
+	TIM6_Int_Init(5000,72);	  //5msÖÐ¶ÏÒç³ö   IN THE CONTROL.c 
 	//USART1_Config(115200);
 	USART_Config(USART3,115200);
 	//LED_Init();
@@ -51,7 +51,7 @@ int main(void)
 				case 1:
 					  Ps2_Mode();
 					break;	
-	////////////////////À¶ÑÀÄ£Ê½////////////////////////
+	////////////////////UARTÄ£Ê½////////////////////////
 				case 2:
 						Blutooth_Mode();
 					break;

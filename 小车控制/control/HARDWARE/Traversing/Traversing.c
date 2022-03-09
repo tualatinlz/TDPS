@@ -13,7 +13,7 @@ void Traversing_GPIO_Init(void)
 
 void Auto_Traversing(void)
 {
-	if(D2==1 && D3 ==0 && D4==1 )  //直行
+	if(D2==1 && D3 ==0 && D4==1 )  //直行 D2  PB15  D3 PB1 D4 PB9
 		{
 				Set_Motor(-1500, 1500,1500, -1500);
 		}

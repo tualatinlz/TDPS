@@ -48,7 +48,7 @@ void TIM1_Configuration(void)
 //arr：自动重装值。
 //psc：时钟预分频数
 //这里使用的是定时器3!
-void TIM6_Int_Init(u16 arr,u16 psc)
+void TIM6_Int_Init(u16 arr,u16 psc)  //now arr 5000 psc 72 7.2Mhz 分频
 {
 	RCC->APB1ENR|=1<<4;//TIM6时钟使能    
  	TIM6->ARR=arr;  	//设定计数器自动重装值//刚好1ms    
