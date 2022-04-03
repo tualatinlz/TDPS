@@ -158,6 +158,7 @@ void USART_Config(USART_TypeDef* TUSARTx,u32 bound)
 
 }
 
+
 void USART1_Config(u32 bound)
 {
 
@@ -186,7 +187,7 @@ void UART_PutChar(USART_TypeDef* USARTx, uint8_t Data)
 
 
 
-void UART_PutStr (USART_TypeDef* USARTx, char *str) 
+void UART_PutStr (USART_TypeDef* USARTx, char *str)    //字符串输入
 {
 	unsigned int i = 0;
 	while(*str != '\0' && i < 500)
@@ -239,7 +240,7 @@ void USART2_IRQHandler(void)
 }
 
 
-void USART3_IRQHandler(void)                
+void USART3_IRQHandler(void)                //串口中断接收数据储存在redata 连接openmv的口
 	{
   static unsigned int i=0;
 	u8 Res;
@@ -247,7 +248,7 @@ void USART3_IRQHandler(void)
 	{ 
 		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
 		Res =USART_ReceiveData(USART3);	
-					
+		//flag_RecFul=1;		
 		if(!flag_RecFul)
 		{
 			redata[i]=Res;

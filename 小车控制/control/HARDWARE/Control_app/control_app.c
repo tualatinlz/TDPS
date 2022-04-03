@@ -4,6 +4,7 @@
 #include "usart.h"
 #include "beep.h"
 #include "sys.h"
+#include "motor.h"
 #include<string.h>
 #include<stdlib.h>
 #define TRUE   1
@@ -15,7 +16,7 @@ extern unsigned char flag_RecFul;
 extern char redata[500];   // 定义接收数据变量数组
 
 uint16 UartRec[8]={1500,1500,1500,1500,1500,1500,1500,1500};
-
+int output_mv,output_mv2;
 unsigned int pwm_num;
 
 extern uint16 ServoPwmDuty[8];
@@ -23,7 +24,7 @@ extern uint16 ServoPwmDuty[8];
 
 int Is_Car_Front(const char *string)
 {
-	if(strncmp(string,"<BUPD>",6)==0 || strncmp(string,"BUPD",4)==0)
+	if(TRUE)
 		return TRUE;
 	else
 		return FALSE;	
@@ -63,7 +64,7 @@ int Is_Car_Speed_Add(const char *string)
 
 int Is_Car_Speed_Slow(const char *string)
 {
-		if(strncmp(string,"BUMD",4)==0)	
+		if(strncmp(string,"BUMD",4)==0)
 		return TRUE;
 	else
 		return FALSE;
@@ -185,9 +186,9 @@ void LX_Control(const char *string)
 	pb = strstr(string,"<X-");
 	if(NULL!=pb )
 	{
-		pb = strchr(pb,'-');
+		pb = strchr(pb,'-');  //返回在字符串 str 中第一次出现字符 '-' 的位置
 			pb++;
-			LxValue = atol(pb);
+			LxValue = atol(pb); //数字字符串变为int
 	//	printf("angle1:%d",angle);
       LX = LxValue;
 	}
@@ -200,7 +201,7 @@ void LY_Control(const char *string)
 	pb = strstr(string,"Y-");
 	if(NULL!=pb )
 	{
-		pb = strchr(pb,'-');
+		pb = strchr(pb,'-');  
 			pb++;
 			LyValue = atol(pb);
 	//	printf("angle1:%d",angle);
@@ -456,7 +457,13 @@ void App_control(const char *str)  //UART control
 
 	 if(Is_Car_Front(str))
 		{
-
+			//output_mv=str;
+		
+			output_mv=(str[0]-'0')*10+str[1]-'0';
+			output_mv2=(str[3]-'0')*10+str[4]-'0';
+			output_mv=-output_mv*30;
+			output_mv2=-output_mv2*30;
+			Set_Motor(output_mv, output_mv2, output_mv2, output_mv);  //前进 左后轮  右后轮 右前轮 左前轮
 		}
 	else if(Is_Car_Back(str))
 		{	
@@ -530,6 +537,7 @@ void App_control_car(void)
 {
     if(flag_RecFul)
 	{
+	  //Beep_Test();
 	  flag_RecFul=0;
 	  App_control(redata);
 	}

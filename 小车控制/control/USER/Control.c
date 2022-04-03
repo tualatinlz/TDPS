@@ -21,6 +21,8 @@ unsigned char Contorl_stick=0;
 unsigned char PS2_Stick=0;
 unsigned char PS2_Flag=0;
 unsigned char ServoCount=0;
+unsigned char ULtrig=0;
+
 
 u32 key;
 
@@ -31,6 +33,12 @@ void TIM6_IRQHandler(void)
 { 		    		  			    
 	if(TIM6->SR&0X0001)//溢出中断
 	{		
+		if(++ULtrig>=4)
+		{
+			ULtrig=0;
+			//Uln_Trig();	
+		}
+		//发送超声波 new 频率过快 得改
 		Control_Flag=1;		
 		if(++ServoCount>=4)
 		{
@@ -232,12 +240,12 @@ void Avoid_Control(void)
 {
 	 if(Distance1>=MIN_DIS_AVOID)  //MIN=70
 				//map(Distance1,MIN_DIS_AVOID,150,40,70);
-				Set_Motor(2000, -2000,-2000, 2000);          //后退
+				Set_Motor(-2000, -2000, -2000, -2000);          //前进 左后轮  右后轮 右前轮 左前轮
   else if(Distance1>50 && Distance1<MIN_DIS_AVOID){
-				Set_Motor(2500, 2500,2500, 2500);
+				Set_Motor(-2000, 2000,2000, -2000);
   }
   else {
-			Set_Motor(-2000, 2000,2000, -2000);        //前进
+			Set_Motor(2000, 2000,2000, 2000);        //后退
 		
   }
 }

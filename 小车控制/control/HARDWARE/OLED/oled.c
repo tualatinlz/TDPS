@@ -20,7 +20,7 @@ void OLED_Init(void)
 {
 //I2C端口初始化
 	RCC->APB2ENR|=1<<0;//使能辅助时钟
-  RCC->APB2ENR|=1<<4;//先使能外设IO PORTC时钟
+  	RCC->APB2ENR|=1<<4;//先使能外设IO PORTC时钟
 		
 	GPIOC->CRH &= 0XFFFF00FF;//PC11 10 推挽输出  
 	GPIOC->CRH |= 0X00003300;	   

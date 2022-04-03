@@ -18,9 +18,9 @@ void Beep_Init(void)
 void Beep_Test(void)
 {
 		BEEP(1);
-	  Delay_ms(200);
+	  Delay_ms(100);
 		BEEP(0);
-	  Delay_ms(200);
+	  //Delay_ms(200);
 }
 
 void N_Beep(char n)
