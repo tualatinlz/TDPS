@@ -72,9 +72,9 @@ void Motor_Init(void)
 	GPIOB->ODR|=0x3<<4;      	//PB4,5上拉	
 			
 }
-//控制电机转速
+//控制电机转速 前进 右下 左下 右上 左上  右下 左下 右上 左上
 //1000-2000
-void Set_Motor(int MotorA,int MotorB,int MotorC,int MotorD)
+void Set_Motor(int MotorA,int MotorB,int MotorC,int MotorD)  //
 {
 	
 	if(MotorA>0)

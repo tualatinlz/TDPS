@@ -242,12 +242,14 @@ void USART2_IRQHandler(void)
 
 void USART3_IRQHandler(void)                //串口中断接收数据储存在redata 连接openmv的口
 	{
-  static unsigned int i=0;
+  	static unsigned int i=0;
 	u8 Res;
 	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  
 	{ 
 		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
 		Res =USART_ReceiveData(USART3);	
+		if(Res ==0xaa)//判断位置
+		i=0;
 		//flag_RecFul=1;		
 		if(!flag_RecFul)
 		{
@@ -256,9 +258,9 @@ void USART3_IRQHandler(void)                //串口中断接收数据储存在redata 连接o
 		
 		if(redata[i-1]=='\r'||redata[i-1]=='>'||i>500)
 		{
-			  redata[i] = 0;
-			  flag_RecFul=1;
-				i=0;
+		    redata[i] = 0;
+		    flag_RecFul=1;
+			i=0;
 			}
 		}
 		else

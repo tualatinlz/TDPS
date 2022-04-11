@@ -1,5 +1,5 @@
 #include "UI.h"
-
+#include "anbt_dmp_mpu6050.h"
 u8 delay_50,delay_flag; 
 			
 
@@ -7,19 +7,23 @@ u8 delay_50,delay_flag;
 int main(void)
 {
 	Stm32_Clock_Init(9);//系统时钟设置
+	delay_init(72);
 	JTAG_Set(JTAG_SWD_DISABLE); //先关闭JATG SWD端口。4路编码器中，需要占用JTAG端口中的部分引脚
 	AFIO->MAPR|=0x1<<8;					//timer2部分重映射，CH1---PA15,CH2---PB3（解码编码器的4个timer中有共用的引脚，因此要重映射?
-//	JTAG_Set(SWD_ENABLE); 			//只开启SWD端口。（必须开启，不然断电后，无法调试或下载程序。此时设置BOOT0为高电平才可以）
+    //JTAG_Set(SWD_ENABLE); 			//只开启SWD端口。（必须开启，不然断电后，无法调试或下载程序。此时设置BOOT0为高电平才可以）
 	//delay_init(72);			//延时初始化?
 	Timer_Init();
 	Timer_ON();
+	OLED_Init();
 	//Uart_Init(1);	
 	Uart_Init(3);	  //CONNECT TO PB10
 	TIM6_Int_Init(5000,72);	  //5ms中断溢出   IN THE CONTROL.c 
 	//USART1_Config(115200);
 	USART_Config(USART3,115200);
+	//OLED_Put12x12CNstr(24,0,"test",LIGHT);
+	//OLED_Refresh_AllGDRAM();
 	//LED_Init();
-//	PS2_Init();
+    //PS2_Init();
 	Beep_Init();
 	KEY_Init();
 	Servor_GPIO_Config();
@@ -28,8 +32,9 @@ int main(void)
 	PID_Init();
 	Set_Motor(0,0,0,0);
 	Adc_Init();
-	OLED_Init();
 	Uln_init();								//超声波初始化
+	delay_ms(100);  			//必须延迟 不然I2C有问题
+	AnBT_DMP_MPU6050_Init();	//6050DMP初始化,不校准	
 	UI_Display_Flag=1;				//标记改变界面	
 	PS2_CH[0]=0;PS2_CH[1]=0;PS2_CH[2]=0;
 

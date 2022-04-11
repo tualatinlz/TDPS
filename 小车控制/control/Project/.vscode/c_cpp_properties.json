@@ -23,6 +23,8 @@
                 "c:\\Users\\Tualatin\\Desktop\\TDPS\\control\\HARDWARE\\EXTI",
                 "c:\\Users\\Tualatin\\Desktop\\TDPS\\control\\HARDWARE\\ULN",
                 "c:\\Users\\Tualatin\\Desktop\\TDPS\\control\\HARDWARE\\Traversing",
+                "c:\\Users\\Tualatin\\Desktop\\TDPS\\control\\HARDWARE\\MPU_I2C",
+                "c:\\Users\\Tualatin\\Desktop\\TDPS\\control\\HARDWARE\\IMU_DMP",
                 "D:\\keil\\ARM\\ARMCC\\include",
                 "D:\\keil\\ARM\\ARMCC\\include\\rw",
                 "c:\\Users\\Tualatin\\Desktop\\TDPS\\control\\FWlib\\src"

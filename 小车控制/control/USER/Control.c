@@ -1,4 +1,5 @@
 #include "UI.h"
+#include "anbt_dmp_mpu6050.h"
 extern uint16 ServoPwmDuty[8];
 #define MIN_DIS_AVOID  70
 u8 time=0;
@@ -22,13 +23,16 @@ unsigned char PS2_Stick=0;
 unsigned char PS2_Flag=0;
 unsigned char ServoCount=0;
 unsigned char ULtrig=0;
-
-
+unsigned int stage_now=1; //当前阶段
+unsigned int f_noww=0; //单次计时
+int angle_add=0;
+int angle_last=0;
 u32 key;
 
 void Ps2_Control(void);
 void Avoid_Control(void);
-
+int angle_motor(int direction,int angle_d);//新
+int motor_time(int x,int y,int z,int h,int time_c);//新
 void TIM6_IRQHandler(void)
 { 		    		  			    
 	if(TIM6->SR&0X0001)//溢出中断
@@ -36,9 +40,10 @@ void TIM6_IRQHandler(void)
 		if(++ULtrig>=4)
 		{
 			ULtrig=0;
-			//Uln_Trig();	
+			Uln_Trig();	
 		}
 		//发送超声波 new 频率过快 得改
+		MPU6050_Pose();  
 		Control_Flag=1;		
 		if(++ServoCount>=4)
 		{
@@ -86,7 +91,24 @@ void TIM6_IRQHandler(void)
 	
 		if(WorkMode==2)
 		{
-			App_control_car();
+			switch(stage_now)
+			{
+				case 1:
+					App_control_car();
+					break;
+				case 2:
+					motor_time(-2000, -2000, -2000,-2000,1000);//前进5秒钟 并自动stage++ 右下 左下 右上 左上
+					break;
+				case 3:
+					angle_motor(1,90);
+					break;
+				case 4:
+					break;
+
+				default:			
+					break;
+			}
+			
 		}
 		if(WorkMode==1)
 		{
@@ -303,5 +325,61 @@ float map(float val,float I_Min,float I_Max,float O_Min,float O_Max)
 	return (((val-I_Min)*((O_Max-O_Min)/(I_Max-I_Min)))+O_Min);
 }
 
+int motor_time(int x,int y,int z,int h,int time_c) //设定多少次，并且自动stage++
+{
+	if(f_noww>=time_c)
+	{
+		stage_now++;
+		f_noww=0;
+		Set_Motor(0,0,0,0);
+		return 0;
+	}
+	Set_Motor(x,y,z,h);
+	f_noww++;
+	return 0;
+}
+int angle_motor(int direction,int angle_d) //direction 0为左 1为右 angle正负多少度 旋转角度小于360度 右下 左下 右上 左上
+{
+	if(f_noww==0)
+	{
+		if(direction==1)
+			Set_Motor(2000,-2000,2000,-2000);
+		else
+			Set_Motor(-2000,2000,-2000,2000);
+		f_noww++;
+	}
+	else
+	{
+		if(direction==1)
+		{
+			if(Yaw <0 && angle_last>0)
+			{
+				angle_add+=(Yaw-angle_last)+360;
+			}
+			else
+			angle_add+=(Yaw-angle_last);
+		}
+		else
+		{
+			if(Yaw >0 && angle_last<0)
+			{
+				angle_add+=(angle_last-Yaw)+360;
+			}
+			else
+			angle_add+=(angle_last-Yaw);
+		}
 
+		if(angle_add>=angle_d)
+		{
+			Set_Motor(0,0,0,0);
+			stage_now++;
+			f_noww=0;
+			angle_add=0;
+			return 0;
+		}
+		f_noww++;
+	}
+	angle_last=Yaw;
+	return 0;
+}
 

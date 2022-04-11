@@ -11,7 +11,7 @@
 
 
 #include "UI.h"
-
+#include "anbt_dmp_mpu6050.h"
 unsigned short int Keytimes=0;				//按键按下时间计数
 unsigned char Kaysta=0;								//按键状态变量
 unsigned char WorkMode=0;							//工作模式变量
@@ -29,7 +29,7 @@ unsigned char Title_Strings[5][13]={
 };
 
 unsigned char StandbyUI_String[3][6][7]={
-"F L: \0","F R: \0","B L:\0","B R：\0","VOLT: \0","DIS: \0",
+"MV L: \0","MV R: \0","YAW:\0","DIS：\0","VOLT: \0","DIS: \0",
 "FL： \0","FR： \0","BL：\0","BR：\0","vOLT: \0","dIS: \0",
 "F_L： \0","F_R： \0","B_L： \0","B_R：\0","Volt：\0","Dis：\0",
 };
@@ -133,8 +133,8 @@ void Blutooth_Mode(void)
 		Kaysta=0;
 	}
 	OLED_Put6x12Num(32,13,output_mv,5,LIGHT);	OLED_Put6x12Num(98,13,output_mv2,5,LIGHT);		
-	OLED_Put6x12Num(32,26,Encoder[0],5,LIGHT);	OLED_Put6x12Num(98,26,Encoder[1],5,LIGHT);	//显示转速
-	OLED_Put5x7Num1dot(30,42,Voltage);		//显示电压	
+	OLED_Put6x12Num(32,26,Yaw,5,LIGHT);	OLED_Put6x12Num(98,26,Distance1,5,LIGHT);	//显示转速
+	OLED_Put5x7Num1dot(30,42,Voltage);		//显示电压
 }
 
 void Tracking_Mode(void)

@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F10X_HD</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\FWlib\inc;..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\USER;..\SYSTEM\usart;..\HARDWARE\Timer;..\HARDWARE\PS2;..\HARDWARE\Beep;..\HARDWARE\Control_app;..\HARDWARE\Servo;..\HARDWARE\MOTOR;..\HARDWARE\ADC;..\HARDWARE\KEY;..\HARDWARE\OLED;..\HARDWARE\ENCODER;..\HARDWARE\EXTI;..\HARDWARE\ULN;..\HARDWARE\Traversing</IncludePath>
+              <IncludePath>..\CORE;..\FWlib\inc;..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\USER;..\SYSTEM\usart;..\HARDWARE\Timer;..\HARDWARE\PS2;..\HARDWARE\Beep;..\HARDWARE\Control_app;..\HARDWARE\Servo;..\HARDWARE\MOTOR;..\HARDWARE\ADC;..\HARDWARE\KEY;..\HARDWARE\OLED;..\HARDWARE\ENCODER;..\HARDWARE\EXTI;..\HARDWARE\ULN;..\HARDWARE\Traversing;..\HARDWARE\MPU_I2C;..\HARDWARE\IMU_DMP</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -592,6 +592,21 @@
               <FileName>Traversing.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\Traversing\Traversing.c</FilePath>
+            </File>
+            <File>
+              <FileName>mpu_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\MPU_I2C\mpu_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>anbt_dmp_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\IMU_DMP\anbt_dmp_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>anbt_dmp_mpu6050.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\IMU_DMP\anbt_dmp_mpu6050.c</FilePath>
             </File>
           </Files>
         </Group>

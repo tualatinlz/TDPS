@@ -458,12 +458,19 @@ void App_control(const char *str)  //UART control
 	 if(Is_Car_Front(str))
 		{
 			//output_mv=str;
-		
-			output_mv=(str[0]-'0')*10+str[1]-'0';
-			output_mv2=(str[3]-'0')*10+str[4]-'0';
-			output_mv=-output_mv*30;
-			output_mv2=-output_mv2*30;
-			Set_Motor(output_mv, output_mv2, output_mv2, output_mv);  //前进 左后轮  右后轮 右前轮 左前轮
+			if(str[0]==0xAA && str[1]==0xff)
+			{
+				output_mv=str[2];
+				output_mv2=str[3];
+				if(output_mv>0 && output_mv<100 && output_mv2>0 && output_mv2<100)
+				{
+					int a,b;
+					a=-(output_mv)*30 ;
+					b=-(output_mv2)*30 ;
+					Set_Motor(b,a,b,a);  //前进   右下 左下 右上 左上
+				}
+				
+			}
 		}
 	else if(Is_Car_Back(str))
 		{	
@@ -538,8 +545,8 @@ void App_control_car(void)
     if(flag_RecFul)
 	{
 	  //Beep_Test();
-	  flag_RecFul=0;
 	  App_control(redata);
+	  flag_RecFul=0;
 	}
 }
 
