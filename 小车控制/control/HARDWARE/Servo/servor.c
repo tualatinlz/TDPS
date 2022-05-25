@@ -4,8 +4,8 @@
 #define MAXPWM 2505		 //舵机最大PWM控制脉宽2.5ms宏定义
 u8 count1;				 //每个变量用作8路舵机先后赋值控制
 static bool Running = FALSE;	 //舵机运作标志位                       	
-uint16 ServoPwmDuty[8] = {1500,1500,1500,1500,1500,1500,1500,1500};	//PWM脉冲宽度
-uint16 ServoPwmDutySet[8] = {1500,1500,1500,1500,1500,1550,1500,1500};	//PWM脉冲宽度
+uint16 ServoPwmDuty[8] = {1500,1000,1500,1500,1500,1500,1500,1500};	//PWM脉冲宽度
+uint16 ServoPwmDutySet[8] = {1500,1000,1500,1500,1500,1550,1500,1500};	//PWM脉冲宽度
 float  ServoPwmDutyInc[8];		//为了速度控制，当PWM脉宽发生变化时，每2.5ms或20ms递增的PWM脉宽
 
 bool ServoPwmDutyHaveChange = TRUE;	//脉宽有变化标志位

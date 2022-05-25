@@ -22,7 +22,7 @@ float Roll,Pitch;
 	
 	RCC->APB2ENR|=1<<4;     //使能PORTC时钟 
 	RCC->APB2ENR|=1<<0;     //开启辅助时钟		  
-	GPIOC->CRH&=0XF0FFFFFF; //PC14设置成输入	  
+	GPIOC->CRH&=0XF0FFFFFF; //PC14设置成输入	   中断输出引脚
 	GPIOC->CRH|=0X08000000;
 	//Ex_NVIC_Config(GPIO_C,14,FTIR); 			//下降沿触发
 	//MY_NVIC_Init(0,0,EXTI15_10_IRQn,2);    //抢占2，子优先级2，组2

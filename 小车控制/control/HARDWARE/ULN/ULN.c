@@ -32,7 +32,7 @@ void Uln_Trig(void)
 void EXTI0_IRQHandler(void)
 {
 	Distance1=TIM7->CNT;//声速为340m/s,一个计数时间为10us,那么声音传播的距离为0.0034m,即0.34cm
-	Distance1=Distance1*17/100-7; //单位0.1cm
+	Distance1=Distance1*17/100-20; //单位0.1cm
 	TimeOut_Flag1=0;
 	EXTI->PR=1<<0;  //清除LINE1上的中断标志位  
 

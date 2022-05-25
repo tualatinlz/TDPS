@@ -248,8 +248,8 @@ void USART3_IRQHandler(void)                //串口中断接收数据储存在redata 连接o
 	{ 
 		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
 		Res =USART_ReceiveData(USART3);	
-		if(Res ==0xaa)//判断位置
-		i=0;
+		//if(Res ==0xaa)//判断位置
+		//i=0;
 		//flag_RecFul=1;		
 		if(!flag_RecFul)
 		{

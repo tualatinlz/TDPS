@@ -1,6 +1,23 @@
 {
     "files.associations": {
         "cstdlib": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "fstream": "c",
+        "istream": "c",
+        "ostream": "c",
+        "sstream": "c",
+        "deque": "c",
+        "functional": "c",
+        "ios": "c",
+        "iosfwd": "c",
+        "iterator": "c",
+        "limits": "c",
+        "memory": "c",
+        "queue": "c",
+        "stdexcept": "c",
+        "streambuf": "c",
+        "string": "c",
+        "utility": "c",
+        "vector": "c"
     }
 }

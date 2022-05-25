@@ -20,20 +20,18 @@ int main(void)
 	TIM6_Int_Init(5000,72);	  //5ms中断溢出   IN THE CONTROL.c 
 	//USART1_Config(115200);
 	USART_Config(USART3,115200);
-	//OLED_Put12x12CNstr(24,0,"test",LIGHT);
-	//OLED_Refresh_AllGDRAM();
 	//LED_Init();
     //PS2_Init();
 	Beep_Init();
 	KEY_Init();
 	Servor_GPIO_Config();
 	Motor_Init();
-	//Encoder_Init();			//初始化编码器
+	Encoder_Init();			//初始化编码器
 	PID_Init();
-	Set_Motor(0,0,0,0);
+	Set_Motor(0,0,0,0); 
 	Adc_Init();
 	Uln_init();								//超声波初始化
-	delay_ms(100);  			//必须延迟 不然I2C有问题
+	delay_ms(150);  			//必须延迟 不然I2C有问题
 	AnBT_DMP_MPU6050_Init();	//6050DMP初始化,不校准	
 	UI_Display_Flag=1;				//标记改变界面	
 	PS2_CH[0]=0;PS2_CH[1]=0;PS2_CH[2]=0;
@@ -44,8 +42,9 @@ int main(void)
 	while(1)
 	{
 		OLED_Refresh_AllGDRAM(); 	//刷新显示
-		if(Control_Flag)
+		if(Control_Flag) //频率同 control中断
 		{	
+			Uln_Trig();	//发送超声波全局
 			switch(WorkMode)
 			{
 	////////////////////待机模式////////////////////////
@@ -54,7 +53,7 @@ int main(void)
 				break;
 	////////////////////手柄模式////////////////////////
 				case 1:
-					  Ps2_Mode();
+					  	Ps2_Mode();
 					break;	
 	////////////////////UART模式////////////////////////
 				case 2:
@@ -72,14 +71,17 @@ int main(void)
 				case 5:Line_Mode();
 					break;
 
-				case 6:break;
+				case 6:
+				break;
 
-				case 7:break;						
+				case 7:
+				break;						
 
-				case 8:break;
+				case 8:
+				break;
 				
 				case 10:
-							 break;
+				break;
 
 				case 11:
 				case 12:

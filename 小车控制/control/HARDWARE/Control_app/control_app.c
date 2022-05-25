@@ -11,7 +11,7 @@
 #define FALSE  0
 extern unsigned char LX;
 extern unsigned char LY;
-
+extern int Motor_Speed[4];	//电机速度
 extern unsigned char flag_RecFul;
 extern char redata[500];   // 定义接收数据变量数组
 
@@ -24,7 +24,7 @@ extern uint16 ServoPwmDuty[8];
 
 int Is_Car_Front(const char *string)
 {
-	if(TRUE)
+	if(string[2]==0xA1)
 		return TRUE;
 	else
 		return FALSE;	
@@ -460,14 +460,15 @@ void App_control(const char *str)  //UART control
 			//output_mv=str;
 			if(str[0]==0xAA && str[1]==0xff)
 			{
-				output_mv=str[2];
-				output_mv2=str[3];
+				output_mv=str[3];
+				output_mv2=str[4];
 				if(output_mv>0 && output_mv<100 && output_mv2>0 && output_mv2<100)
 				{
 					int a,b;
-					a=-(output_mv)*30 ;
-					b=-(output_mv2)*30 ;
-					Set_Motor(b,a,b,a);  //前进   右下 左下 右上 左上
+					a=(output_mv); 
+					b=-(output_mv2) ;
+					Motor_Speed[0]=a; Motor_Speed[1]=b ;Motor_Speed[2]=b; Motor_Speed[3]=a;			//电机速度值 和接线顺序有关！！！！
+					//Set_Motor(b,a,b,a);  //左下 右下(反) 右上(反) 左上
 				}
 				
 			}
@@ -547,6 +548,7 @@ void App_control_car(void)
 	  //Beep_Test();
 	  App_control(redata);
 	  flag_RecFul=0;
+	  memset(redata,'\0',sizeof(redata));
 	}
 }
 

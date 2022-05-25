@@ -25,7 +25,7 @@ short int PS2_CH[3];
 unsigned char Control_Flag=0;		
 extern int output_mv,output_mv2;
 unsigned char Title_Strings[5][13]={
-"[Functions]\0",	"[ PS2 test ]\0",	"[UART]\0","[trail]\0","[Ultrasonic]\0",
+"[Functions]\0",	"[ PS2 test ]\0",	"[Patio 1]\0","[Patio 2]\0","[Ultrasonic]\0",
 };
 
 unsigned char StandbyUI_String[3][6][7]={
@@ -39,7 +39,7 @@ unsigned char StandbyUI_String2[2][21]={
 };
 
 unsigned char SettingUI_String[4][11]={
-"PS2 test \0","UART \0","trail \0","Ultrasonic\0",
+"PS2 test \0","Patio 1 \0","Patio 2 \0","Ultrasonic\0",
 };
 
 u8 Standby_Mode(void)
@@ -158,8 +158,8 @@ void Tracking_Mode(void)
 		UI_Display_Flag=1;
 		Kaysta=0;
 	}		
-	OLED_Put6x12Num(32,13,Encoder[3],5,LIGHT);	OLED_Put6x12Num(98,13,Encoder[2],5,LIGHT);		
-	OLED_Put6x12Num(32,26,Encoder[0],5,LIGHT);	OLED_Put6x12Num(98,26,Encoder[1],5,LIGHT);	//显示转速
+	OLED_Put6x12Num(32,13,output_mv,5,LIGHT);	OLED_Put6x12Num(98,13,output_mv2,5,LIGHT);		
+	OLED_Put6x12Num(32,26,Yaw,5,LIGHT);	OLED_Put6x12Num(98,26,Distance1,5,LIGHT);	//显示转速
 	OLED_Put5x7Num1dot(30,42,Voltage);		//显示电压	
 }
 

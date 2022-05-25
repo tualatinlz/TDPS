@@ -5,6 +5,7 @@ extern uint16 ServoPwmDuty[8];
 u8 time=0;
 //#define	LED PDout(2)  
 u8 led_time=0;
+char send_mode[3]={0}; //新切换模式
 int Motor_Speed[4];			//电机速度值
 int Motor_DrctAdj[4];		//电机转向调整
 
@@ -13,7 +14,7 @@ unsigned char LY=127;
 
 PID PID_Motor[4];
 
-u8 ARMED=0;
+u8 ARMED=1;   //启动编码器标记
 float Voltage_Count,Voltage_All;  //电压采样相关变量
 unsigned char nmr=0;
 
@@ -33,6 +34,8 @@ void Ps2_Control(void);
 void Avoid_Control(void);
 int angle_motor(int direction,int angle_d);//新
 int motor_time(int x,int y,int z,int h,int time_c);//新
+int servor_time(int x,int y,int time_c);//新
+int mode_change(int x);//新 切换模式
 void TIM6_IRQHandler(void)
 { 		    		  			    
 	if(TIM6->SR&0X0001)//溢出中断
@@ -40,7 +43,7 @@ void TIM6_IRQHandler(void)
 		if(++ULtrig>=4)
 		{
 			ULtrig=0;
-			Uln_Trig();	
+			//Uln_Trig();	
 		}
 		//发送超声波 new 频率过快 得改
 		MPU6050_Pose();  
@@ -86,7 +89,30 @@ void TIM6_IRQHandler(void)
 		if(Contorl_stick==4)
 		{
 			Contorl_stick=0;
-			//Read_Encoder();//读编码器		
+			Read_Encoder();//读编码器	
+			if(ARMED)		
+			{
+				for(nmr=0;nmr<4;nmr++)
+				{
+					PID_Motor[nmr].error=Encoder[nmr]-Motor_Speed[nmr];
+					//输出的P值
+					PID_Motor[nmr].pout = PID_Motor[nmr].Pdat * PID_Motor[nmr].error;
+					//输出的I值
+					PID_Motor[nmr].iout += (PID_Motor[nmr].Idat*0.05) * PID_Motor[nmr].error;
+					PID_Motor[nmr].iout = Get_MxMi(PID_Motor[nmr].iout,200,-200);//判读I是否超出范围
+					//输出的D值
+					PID_Motor[nmr].dout = PID_Motor[nmr].Ddat*0.05*(PID_Motor[nmr].error-PID_Motor[nmr].Last_error);	
+					PID_Motor[nmr].Last_error=PID_Motor[nmr].error;	
+					//PID三个值融合
+					PID_Motor[nmr].OUT += PID_Motor[nmr].pout + PID_Motor[nmr].iout +PID_Motor[nmr].dout;////P,I,D值相加
+					PID_Motor[nmr].OUT=Get_MxMi(PID_Motor[nmr].OUT,4599,-4599);
+				}
+				Set_Motor(PID_Motor[0].OUT, PID_Motor[1].OUT, PID_Motor[2].OUT, PID_Motor[3].OUT);
+			 }
+			else
+			{
+			//	Set_Motor(0, 0, 0, 0);
+			}
 		}
 	
 		if(WorkMode==2)
@@ -95,16 +121,33 @@ void TIM6_IRQHandler(void)
 			{
 				case 1:
 					App_control_car();
+					if(Distance1<=30)
+					{	
+						//stage_now++;
+						Set_Motor(0, 0, 0, 0);
+						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+
+					}
+						
 					break;
 				case 2:
-					motor_time(-2000, -2000, -2000,-2000,1000);//前进5秒钟 并自动stage++ 右下 左下 右上 左上
-					break;
-				case 3:
 					angle_motor(1,90);
 					break;
-				case 4:
+				case 3:
+					motor_time(80, -80, -80,80,2000);//前进5秒钟 并自动stage++ //左下 右下(反) 右上(反) 左上
 					break;
-
+				case 4:
+					App_control_car();
+					break;
+				case 5:
+					servor_time(1500,1500,1000); //舵机设定
+					break;
+				case 6:
+					servor_time(1500,1500,1000); //舵机设定
+					break;
+				case 7:
+					servor_time(1500,1500,1000); //舵机设定
+					break;
 				default:			
 					break;
 			}
@@ -116,11 +159,77 @@ void TIM6_IRQHandler(void)
 		}
 		if(WorkMode==3)
 		{
-			Auto_Traversing();
+			//Auto_Traversing();
+			switch(stage_now)
+			{
+				case 1:
+					servor_time(1500,1350,100); //舵机设定
+					break;
+				case 2:
+					App_control_car();
+					if(Distance1<=30)
+					{
+						stage_now++;
+						Set_Motor(0, 0, 0, 0);
+						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+					}
+					break;
+				case 3:
+					angle_motor(0,90);
+					break;
+				case 4:
+					App_control_car();
+					if(Distance1<=30)
+					{
+						stage_now++;
+						Set_Motor(0, 0, 0, 0);
+						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+					}
+					break;
+				case 5:
+					angle_motor(0,90);
+					
+					break;
+				case 6:
+					App_control_car();
+					if(Distance1<=30)
+					{
+						stage_now++;
+						Set_Motor(0, 0, 0, 0);
+						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+					}
+					break;
+				case 7:
+					stage_now++;
+					break;
+				case 8:
+					stage_now++;
+					break;
+				case 9:
+					servor_time(1000,1350,1000); //舵机设定
+					break;
+				case 10:
+					servor_time(1000,1000,1000); //舵机设定
+					break;
+				case 11:	
+
+					break;
+				case 12:
+					mode_change(1);  //切换1模式测试
+					stage_now++;
+					break;
+				case 13:
+					servor_time(1500,1500,1000); //舵机设定
+					break;
+				default:			
+					break;
+			}
 		}
 		if(WorkMode==4)
 		{
-			Avoid_Control();
+			//Set_Motor(-1500,-1500,-1500,-1500); //左下 右下(反) 右上(反) 左上
+			Motor_Speed[0]=80; Motor_Speed[1]=-80; Motor_Speed[2]=-80; Motor_Speed[3]=80;
+			//Avoid_Control();
 		}
 	}	
 	TIM6->SR&=~(1<<0);//清除中断标志位 	    
@@ -133,7 +242,7 @@ void Ps2_Control(void)
 		PS2_CH[1]=	PS2_AnologData(PSS_RX);
 		PS2_CH[2]=	PS2_AnologData(PSS_LX);
 		Car_Control((PS2_CH[1]-127)*3/5,(127-PS2_CH[0])*3/5,(PS2_CH[2]-127)/2);   //get motor speed in x,y,yaw
-	  Set_Motor(Motor_Speed[0]*25, Motor_Speed[1]*25,Motor_Speed[2]*25,Motor_Speed[3]*25); //then set motor speed
+	  	Set_Motor(Motor_Speed[0]*25, Motor_Speed[1]*25,Motor_Speed[2]*25,Motor_Speed[3]*25); //then set motor speed
 		switch (key)
 		{
 			case PSB_PAD_DOWN:
@@ -262,7 +371,7 @@ void Avoid_Control(void)
 {
 	 if(Distance1>=MIN_DIS_AVOID)  //MIN=70
 				//map(Distance1,MIN_DIS_AVOID,150,40,70);
-				Set_Motor(-2000, -2000, -2000, -2000);          //前进 左后轮  右后轮 右前轮 左前轮
+				Set_Motor(-2000, -2000, -2000, -2000);        //左下 右下(反) 右上(反) 左上
   else if(Distance1>50 && Distance1<MIN_DIS_AVOID){
 				Set_Motor(-2000, 2000,2000, -2000);
   }
@@ -325,6 +434,20 @@ float map(float val,float I_Min,float I_Max,float O_Min,float O_Max)
 	return (((val-I_Min)*((O_Max-O_Min)/(I_Max-I_Min)))+O_Min);
 }
 
+int servor_time(int x,int y,int time_c) //设定一次两个舵机的pwm，设定多少次，并且自动stage++
+{
+	if(f_noww>=time_c)
+	{
+		stage_now++;
+		f_noww=0;
+		return 0;
+	}
+	ServoPwmDuty[0]=x;
+	ServoPwmDuty[1]=y;
+	f_noww++;
+	return 0;
+}
+
 int motor_time(int x,int y,int z,int h,int time_c) //设定多少次，并且自动stage++
 {
 	if(f_noww>=time_c)
@@ -332,45 +455,48 @@ int motor_time(int x,int y,int z,int h,int time_c) //设定多少次，并且自动stage++
 		stage_now++;
 		f_noww=0;
 		Set_Motor(0,0,0,0);
+		Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0; 
 		return 0;
 	}
-	Set_Motor(x,y,z,h);
+	Motor_Speed[0]=x; Motor_Speed[1]=y; Motor_Speed[2]=z; Motor_Speed[3]=h; 
 	f_noww++;
 	return 0;
 }
-int angle_motor(int direction,int angle_d) //direction 0为左 1为右 angle正负多少度 旋转角度小于360度 右下 左下 右上 左上
+int angle_motor(int direction,int angle_d) //direction 自动stage++ 0为左 1为右 angle正负多少度 旋转角度小于360度 //左下 右下(反) 右上(反) 左上 和接线顺序有关！！！！
 {
 	if(f_noww==0)
 	{
-		if(direction==1)
-			Set_Motor(2000,-2000,2000,-2000);
-		else
-			Set_Motor(-2000,2000,-2000,2000);
+		if(direction==1){
+			Motor_Speed[0]=1500; Motor_Speed[1]=1500; Motor_Speed[2]=1500; Motor_Speed[3]=1500; 
+			angle_add=Yaw-angle_d;
+			if(angle_add<-180)
+				angle_add+=360;
+			}
+		else{
+			Motor_Speed[0]=-1500; Motor_Speed[1]=-1500; Motor_Speed[2]=-1500; Motor_Speed[3]=-1500; 
+			angle_add=Yaw+angle_d;
+			if(angle_add>180)
+				angle_add-=360;
+			}
 		f_noww++;
 	}
 	else
 	{
-		if(direction==1)
+		float error_Y;
+		error_Y=Yaw-angle_add;
+		if(error_Y>2)
 		{
-			if(Yaw <0 && angle_last>0)
-			{
-				angle_add+=(Yaw-angle_last)+360;
-			}
-			else
-			angle_add+=(Yaw-angle_last);
+			Motor_Speed[0]=-1*error_Y; Motor_Speed[1]=-1*error_Y; Motor_Speed[2]=-1*error_Y; Motor_Speed[3]=-1*error_Y; 
 		}
 		else
+		if(error_Y<-2)
 		{
-			if(Yaw >0 && angle_last<0)
-			{
-				angle_add+=(angle_last-Yaw)+360;
-			}
-			else
-			angle_add+=(angle_last-Yaw);
+			Motor_Speed[0]=1*error_Y; Motor_Speed[1]=1*error_Y; Motor_Speed[2]=1*error_Y; Motor_Speed[3]=1*error_Y; 
 		}
 
-		if(angle_add>=angle_d)
+		if(abs(error_Y)<=2)
 		{
+			Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0; 
 			Set_Motor(0,0,0,0);
 			stage_now++;
 			f_noww=0;
@@ -379,7 +505,15 @@ int angle_motor(int direction,int angle_d) //direction 0为左 1为右 angle正负多少
 		}
 		f_noww++;
 	}
-	angle_last=Yaw;
 	return 0;
 }
 
+int mode_change(int x)
+{
+	send_mode[0]=0xaa;
+	send_mode[1]=0xff;
+	send_mode[2]=x;
+	UART_PutStr(USART3,send_mode);
+	memset(send_mode,0,sizeof(send_mode));
+	return 0;
+}
