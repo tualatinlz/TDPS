@@ -24,12 +24,13 @@ unsigned char UI_Display_Flag=0;			//标记界面写入一次
 short int PS2_CH[3];
 unsigned char Control_Flag=0;		
 extern int output_mv,output_mv2;
+extern unsigned int stage_now;
 unsigned char Title_Strings[5][13]={
 "[Functions]\0",	"[ PS2 test ]\0",	"[Patio 1]\0","[Patio 2]\0","[Ultrasonic]\0",
 };
 
 unsigned char StandbyUI_String[3][6][7]={
-"MV L: \0","MV R: \0","YAW:\0","DIS：\0","VOLT: \0","DIS: \0",
+"MV L: \0","Stage:\0","YAW:\0","DIS：\0","VOLT: \0","DIS: \0",
 "FL： \0","FR： \0","BL：\0","BR：\0","vOLT: \0","dIS: \0",
 "F_L： \0","F_R： \0","B_L： \0","B_R：\0","Volt：\0","Dis：\0",
 };
@@ -105,7 +106,7 @@ void Ps2_Mode(void)
 		UI_Display_Flag=1;
 		Kaysta=0;
 	}
-	OLED_Put6x12Num(32,13,output_mv,5,LIGHT);	OLED_Put6x12Num(98,13,Encoder[2],5,LIGHT);		
+	OLED_Put6x12Num(32,13,Encoder[3],5,LIGHT);	OLED_Put6x12Num(98,13,Encoder[2],5,LIGHT);		
 	OLED_Put6x12Num(32,26,Encoder[0],5,LIGHT);	OLED_Put6x12Num(98,26,Encoder[1],5,LIGHT);	//显示转速
 	OLED_Put5x7Num1dot(30,42,Voltage);		//显示电压	
 
@@ -132,7 +133,7 @@ void Blutooth_Mode(void)
 		UI_Display_Flag=1;
 		Kaysta=0;
 	}
-	OLED_Put6x12Num(32,13,output_mv,5,LIGHT);	OLED_Put6x12Num(98,13,output_mv2,5,LIGHT);		
+	OLED_Put6x12Num(32,13,output_mv,5,LIGHT);	OLED_Put6x12Num(98,13,stage_now,5,LIGHT);		
 	OLED_Put6x12Num(32,26,Yaw,5,LIGHT);	OLED_Put6x12Num(98,26,Distance1,5,LIGHT);	//显示转速
 	OLED_Put5x7Num1dot(30,42,Voltage);		//显示电压
 }
@@ -158,7 +159,7 @@ void Tracking_Mode(void)
 		UI_Display_Flag=1;
 		Kaysta=0;
 	}		
-	OLED_Put6x12Num(32,13,output_mv,5,LIGHT);	OLED_Put6x12Num(98,13,output_mv2,5,LIGHT);		
+	OLED_Put6x12Num(32,13,output_mv,5,LIGHT);	OLED_Put6x12Num(98,13,stage_now,5,LIGHT);		
 	OLED_Put6x12Num(32,26,Yaw,5,LIGHT);	OLED_Put6x12Num(98,26,Distance1,5,LIGHT);	//显示转速
 	OLED_Put5x7Num1dot(30,42,Voltage);		//显示电压	
 }

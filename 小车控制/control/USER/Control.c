@@ -5,7 +5,7 @@ extern uint16 ServoPwmDuty[8];
 u8 time=0;
 //#define	LED PDout(2)  
 u8 led_time=0;
-char send_mode[3]={0}; //ÐÂÇÐ»»Ä£Ê½
+char send_mode[4]={0}; //ÐÂÇÐ»»Ä£Ê½
 int Motor_Speed[4];			//µç»úËÙ¶ÈÖµ
 int Motor_DrctAdj[4];		//µç»ú×ªÏòµ÷Õû
 
@@ -24,7 +24,7 @@ unsigned char PS2_Stick=0;
 unsigned char PS2_Flag=0;
 unsigned char ServoCount=0;
 unsigned char ULtrig=0;
-unsigned int stage_now=1; //µ±Ç°½×¶Î
+unsigned int stage_now=0; //µ±Ç°½×¶Î
 unsigned int f_noww=0; //µ¥´Î¼ÆÊ±
 int angle_add=0;
 int angle_last=0;
@@ -36,14 +36,16 @@ int angle_motor(int direction,int angle_d);//ÐÂ
 int motor_time(int x,int y,int z,int h,int time_c);//ÐÂ
 int servor_time(int x,int y,int time_c);//ÐÂ
 int mode_change(int x);//ÐÂ ÇÐ»»Ä£Ê½
+int motor_angle(int x,int y,int z,int h,float angle_mpu,int time_c); //ÐÂ Éè¶¨¾ßÌå½Ç¶ÈÊ±¼ä£¬²¢ÇÒ×Ô¶¯stage++
 void TIM6_IRQHandler(void)
 { 		    		  			    
 	if(TIM6->SR&0X0001)//Òç³öÖÐ¶Ï
 	{		
-		if(++ULtrig>=4)
+		if(++ULtrig>=20)
 		{
 			ULtrig=0;
 			//Uln_Trig();	
+			Uln_Trig();	//·¢ËÍ³¬Éù²¨È«¾Ö
 		}
 		//·¢ËÍ³¬Éù²¨ new ÆµÂÊ¹ý¿ì µÃ¸Ä
 		MPU6050_Pose();  
@@ -119,34 +121,60 @@ void TIM6_IRQHandler(void)
 		{
 			switch(stage_now)
 			{
+				case 0:
+					stage_now++;
+					break;
 				case 1:
+					mode_change(0x01);
+					stage_now++;
+					break;
+				case 2:
+				    
 					App_control_car();
-					if(Distance1<=30)
+					//stage_now++; Ñ²Ïß²¿·Ö
+					if(Distance1<=25 && Distance_last<=25 && Distance1>0 && Distance_last>0)
 					{	
-						//stage_now++;
+						stage_now++;
 						Set_Motor(0, 0, 0, 0);
 						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
 
 					}
 						
 					break;
-				case 2:
-					angle_motor(1,90);
-					break;
 				case 3:
-					motor_time(80, -80, -80,80,2000);//Ç°½ø5ÃëÖÓ ²¢×Ô¶¯stage++ //×óÏÂ ÓÒÏÂ(·´) ÓÒÉÏ(·´) ×óÉÏ
+					motor_time(-50, 50, 50,-50,32);  
 					break;
 				case 4:
-					App_control_car();
+					angle_motor(1,89); //µ±Ç°ÓÒ×ª
 					break;
 				case 5:
-					servor_time(1500,1500,1000); //¶æ»úÉè¶¨
+					delay_ms(5000);
+					stage_now++;
 					break;
 				case 6:
-					servor_time(1500,1500,1000); //¶æ»úÉè¶¨
+					stage_now++;
 					break;
+				
 				case 7:
-					servor_time(1500,1500,1000); //¶æ»úÉè¶¨
+					motor_time(100, -100, -100,100,1430);
+					//motor_time(100, -100, -100,100,1670);//Ç°½øÉÏÇÅ  ²¢×Ô¶¯stage++ //×óÏÂ ÓÒÏÂ(·´) ÓÒÉÏ(·´) ×óÉÏ 
+					break;
+				case 8:
+					//App_control_car();
+					angle_motor(0,93); //µ±Ç°½Ç¶È×ó×ª
+					break;
+				case 9:
+					delay_ms(5000);
+					stage_now++;
+					break;
+				case 10:
+					motor_time(100, -100, -100,100,1400);  //µ½´ï¹°ÃÅÍ£ÏÂ
+					break;
+				case 11:
+					//Í£Ö¹
+					break;
+				case 12:
+					
 					break;
 				default:			
 					break;
@@ -162,64 +190,244 @@ void TIM6_IRQHandler(void)
 			//Auto_Traversing();
 			switch(stage_now)
 			{
+				
+				case 0:
+					servor_time(1500,1350,400); //¶æ»úÉè¶¨ ¼ÐÆðÇò
+					break;
 				case 1:
-					servor_time(1500,1350,100); //¶æ»úÉè¶¨
+					motor_time(50, -50, -50,50,1200); //Ö±×ßµ½Í¼Ïñ
 					break;
 				case 2:
-					App_control_car();
-					if(Distance1<=30)
-					{
-						stage_now++;
-						Set_Motor(0, 0, 0, 0);
-						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
-					}
+					angle_motor(0,90); 
 					break;
 				case 3:
-					angle_motor(0,90);
+					stage_now++;
 					break;
 				case 4:
-					App_control_car();
-					if(Distance1<=30)
-					{
-						stage_now++;
-						Set_Motor(0, 0, 0, 0);
-						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
-					}
+					motor_time(0, 0, 0,0,100); 
 					break;
 				case 5:
-					angle_motor(0,90);
-					
+					mode_change(0x02);  //ÇÐ»»Ä£Ê½µÈ
+					App_control_car(); //¸Ästage
 					break;
 				case 6:
+					
+					break;
+				case 7:
+					stage_now++;//ÈßÓàÎ»
+					break;
+				/************************************×ó±ß*****************************************/
+				case 8:
+					motor_time(50, -50, -50,50,200); //Ö±×ßµ½Í¼Ïñ
+					break;
+				case 9:
+					angle_motor(0,45); //×ó±ßÄÇ¸öÅÆ×Ó Æð
+					break;
+				case 10:
+					motor_time(50, -50, -50,50,1600); //ÍÆµ¹
+					break;
+				case 11:
+					angle_motor(1,45); //»ØÕý
+					break;
+				case 12:
+					motor_time(50, -50, -50,50,1100);
+					break;
+				case 13:
+					angle_motor(1,80); //»ØÕý
+					break;
+				case 14:
+					Motor_Speed[0]=50; Motor_Speed[1]=-50; Motor_Speed[2]=-50; Motor_Speed[3]=50;
+					if(Distance1<=30 && Distance_last<=30 && Distance1>0 && Distance_last>0)
+					{
+						Set_Motor(0, 0, 0, 0);
+						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+						stage_now++;
+						
+					}
+					break;
+				case 15:
+					motor_time(-50, 50, 50,-50,50); //Ö±×ßµ½Í¼Ïñ
+					
+					break;
+				case 16:
+					angle_motor(0,90); //×ó×ª»ØÀ´ 
+					break;
+				
+				
+
+				case 17:
+					stage_now=39; //×ªÌøµ½mv¿Ø
+					break;
+				/************************************ÖÐ¼ä*****************************************/
+				case 18:
+					motor_time(50, -50, -50,50,100); //Ö±×ßµ½Í¼Ïñ
+					break;
+				case 19:
+					stage_now++;
+					break;
+				case 20:
+					motor_time(50, -50, -50,50,2300); //Ö±ÍÆµ¹
+					break;
+				case 21:
+					angle_motor(1,90); //ÓÒ×ª»ØÈ¥Î»ÖÃ
+					break;
+				case 22:
+					Motor_Speed[0]=50; Motor_Speed[1]=-50; Motor_Speed[2]=-50; Motor_Speed[3]=50;
+					if(Distance1<=30 && Distance_last<=30 && Distance1>0 && Distance_last>0)
+					{
+						Set_Motor(0, 0, 0, 0);
+						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+						stage_now++;
+						
+					}//Ö±×ßµ½À¸¸Ë
+					break;
+				case 23:
+					angle_motor(0,90); //×óÌù±ß
+					break;
+				case 24:
+					stage_now=39; //×ªÌøµ½mv
+					break;
+				/************************************ÓÒ±ß*****************************************/
+				case 25:
+					motor_time(50, -50, -50,50,200); //Ö±×ßµ½Í¼Ïñ
+					break;
+				case 26:
+					angle_motor(1,45); //ÃæÏòÓÒ±ß
+					break;
+				case 27:
+					motor_time(50, -50, -50,50,1600); //×²
+					break;
+				case 28:
+					angle_motor(0,45); //Ãæ¸Ë×Ó
+					break;
+				case 29:
+					motor_time(50, -50, -50,50,1100); //×²
+					break;
+				case 30:
+					stage_now++; //ÈßÓà
+					break;
+				
+				case 31:
+					stage_now++; //ÈßÓà
+					break;
+				case 32:
+					stage_now++; //ÈßÓà
+					break;
+				case 33:
+					stage_now++;//ÈßÓàÎ»
+					break;
+				case 34:
+					stage_now++; //ÈßÓà
+					break;
+				case 35:
+					stage_now++; //ÈßÓà
+					break;
+				case 36:
+					stage_now++;
+					break;
+				case 37:
+					stage_now++;
+					break;
+				case 38:
+					stage_now=39; //×ªÌøµ½mv¿Ø
+					break;
+				case 39:
+					delay_ms(3000);
+					mode_change(0x03);  //ÇÐ»»³¬Éù²¨Ä£Ê½
+					stage_now++;
+					break;
+				case 40:
+					App_control_car(); //Ñ²±ß
+					break;
+				case 41:
+					motor_time(40, -40, -40,40,50);
+					break;
+				case 42:
+			     	angle_motor(1,90); //ÓÒ×ª
+					break;
+				case 43:
+					motor_time(30, -30, -30,30,300); //Ö±ÐÐ
+					break;
+				case 44:
+					mode_change(0x03);  //ÇÐ»»³¬Éù²¨Ä£Ê½
+					stage_now++;
+					break;
+				case 45:
 					App_control_car();
-					if(Distance1<=30)
+					if(Distance1<=22 && Distance_last<=22 && Distance1>0 && Distance_last>0)
 					{
 						stage_now++;
 						Set_Motor(0, 0, 0, 0);
 						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
 					}
 					break;
-				case 7:
+				case 46:
+					angle_motor(0,90);  //Ö÷¿ØÍä	
+					break;
+				case 47:
+					App_control_car(); //Ñ²±ß
+					break;
+				case 48:
+					angle_motor(1,90); //ÓÒ×ª
+					break;
+				case 49:
+					motor_time(40, -40, -40,40,400); //Ö±ÐÐ
+					break;
+				case 50:
+					mode_change(0x03);  //ÇÐ»»³¬Éù²¨Ä£Ê½
 					stage_now++;
 					break;
-				case 8:
+				case 51:
+					App_control_car();  //Ñ²±ß
+					if(Distance1<=23 && Distance_last<=23 && Distance1>0 && Distance_last>0)
+					{
+						stage_now++;
+						Set_Motor(0, 0, 0, 0);
+						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+					}
+					break;
+				case 52:
+					angle_motor(0,90);  //Ö÷¿ØÍä×ó×ª
+					break;
+				case 53:
+					mode_change(0x03);  //ÇÐ»»³¬Éù²¨Ä£Ê½
+					stage_now++;
+				case 54:
+					
+					App_control_car();  //Ñ²±ß
+					if(Distance1<=23 && Distance_last<=23 && Distance1>0 && Distance_last>0)
+					{
+						stage_now++;
+						Set_Motor(0, 0, 0, 0);
+						Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+					}
+					break;
+				case 55:
 					stage_now++;
 					break;
-				case 9:
+				case 56:
+					stage_now++;
+					break;
+				case 57:
 					servor_time(1000,1350,1000); //¶æ»úÉè¶¨
 					break;
-				case 10:
+				case 58:
 					servor_time(1000,1000,1000); //¶æ»úÉè¶¨
 					break;
-				case 11:	
-
+				case 59:	
+					servor_time(1500,1500,1000); //¶æ»úÉè¶¨Íê³ÉÈÓÇò
 					break;
-				case 12:
-					mode_change(1);  //ÇÐ»»1Ä£Ê½²âÊÔ
-					stage_now++;
+				case 60:
+					angle_motor(0,90);  //×ó×ª
 					break;
-				case 13:
-					servor_time(1500,1500,1000); //¶æ»úÉè¶¨
+				case 61:
+					motor_time(100, -100, -100,100,4000); //¶æ»úÉè¶¨ Ö±×ß ×¼±¸·¢ËÍ
+					break;
+				case 62:
+					  	                        
+					break;
+				case 63:
+					
 					break;
 				default:			
 					break;
@@ -228,7 +436,7 @@ void TIM6_IRQHandler(void)
 		if(WorkMode==4)
 		{
 			//Set_Motor(-1500,-1500,-1500,-1500); //×óÏÂ ÓÒÏÂ(·´) ÓÒÉÏ(·´) ×óÉÏ
-			Motor_Speed[0]=80; Motor_Speed[1]=-80; Motor_Speed[2]=-80; Motor_Speed[3]=80;
+			servor_time(1000,1000,1000); //¶æ»úÉè¶¨
 			//Avoid_Control();
 		}
 	}	
@@ -284,22 +492,22 @@ void Ps2_Control(void)
 				break;
 
 			case PSB_TRIANGLE:
-				servoPwmDutyTemp = ServoPwmDuty[2];
-				servoPwmDutyTemp += 2;
+				servoPwmDutyTemp = ServoPwmDuty[1];
+				servoPwmDutyTemp += 10;
 				if(servoPwmDutyTemp >= 2500)
 				{
 					servoPwmDutyTemp = 2500;
 				}
-				ServoPwmDuty[2] = servoPwmDutyTemp;
+				ServoPwmDuty[1] = servoPwmDutyTemp;
 				break;
 			case PSB_CROSS:
-				servoPwmDutyTemp = ServoPwmDuty[2];
-				servoPwmDutyTemp -= 2;
+				servoPwmDutyTemp = ServoPwmDuty[1];
+				servoPwmDutyTemp -= 10;
 				if(servoPwmDutyTemp <= 500)
 				{
 					servoPwmDutyTemp = 500;
 				}
-				ServoPwmDuty[2] = servoPwmDutyTemp;
+				ServoPwmDuty[1] = servoPwmDutyTemp;
 				break;
 			case PSB_PINK:
 				servoPwmDutyTemp = ServoPwmDuty[3];
@@ -383,8 +591,8 @@ void Avoid_Control(void)
 
 void Car_Control(int Y_Move,int X_Move,int Yaw)  // distance control????
 {
-	Motor_Speed[0] =  (-Y_Move + X_Move + Yaw)*Motor_DrctAdj[0];	Motor_Speed[2] = (Y_Move - X_Move + Yaw)*Motor_DrctAdj[2];
-	Motor_Speed[1] = 	(-Y_Move - X_Move + Yaw)*Motor_DrctAdj[1];	Motor_Speed[3] = (Y_Move + X_Move + Yaw)*Motor_DrctAdj[3];	
+	Motor_Speed[0] =  (-X_Move*1.1+-Yaw*2.5)*Motor_DrctAdj[0];	Motor_Speed[2] = ( X_Move*1.1+-Yaw*2.5)*Motor_DrctAdj[2];
+	Motor_Speed[1] =  ( X_Move*1.1+-Yaw*2.5)*Motor_DrctAdj[1];	Motor_Speed[3] = (-X_Move*1.1+-Yaw*2.5)*Motor_DrctAdj[3];	
 }
 
 void PID_Init(void)
@@ -394,7 +602,7 @@ void PID_Init(void)
 	PID_Motor[1].Pdat=16.0;	PID_Motor[1].Idat=0.0;	PID_Motor[1].Ddat=4.0;
 	PID_Motor[2].Pdat=16.0;	PID_Motor[2].Idat=0.0;	PID_Motor[2].Ddat=4.0;
 	PID_Motor[3].Pdat=16.0;	PID_Motor[3].Idat=0.0;	PID_Motor[3].Ddat=4.0;
-	Motor_DrctAdj[0]=1;Motor_DrctAdj[1]=1;Motor_DrctAdj[2]=1;Motor_DrctAdj[3]=1;
+	Motor_DrctAdj[0]=1;Motor_DrctAdj[1]=1;Motor_DrctAdj[2]=1;Motor_DrctAdj[3]=1; 
 
 
 	PID_Motor[0].iout=0;
@@ -447,7 +655,30 @@ int servor_time(int x,int y,int time_c) //Éè¶¨Ò»´ÎÁ½¸ö¶æ»úµÄpwm£¬Éè¶¨¶àÉÙ´Î£¬²¢Ç
 	f_noww++;
 	return 0;
 }
-
+int motor_angle(int x,int y,int z,int h,float angle_mpu,int time_c) //Éè¶¨¾ßÌå½Ç¶ÈÊ±¼ä£¬²¢ÇÒ×Ô¶¯stage++ ËÙ¶È²»ÄÜÉèÖÃ¹ý¸ß
+{
+	float angle_error=Yaw-angle_mpu;
+	if(f_noww>=time_c)
+	{
+		stage_now++;
+		f_noww=0;
+		Set_Motor(0,0,0,0);
+		Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0; 
+		return 0;
+	}
+	if(angle_error<=-180)
+	{
+		angle_error+=180;
+	}
+	else
+	if(angle_error>=180)
+	{
+		angle_error-=180;
+	} //angle_error´óÓÚ0Ó¦¸ÃÏòÓÒÆ«
+	Motor_Speed[0]=x+angle_error*5; Motor_Speed[1]=y-angle_error*5; Motor_Speed[2]=z-angle_error*5; Motor_Speed[3]=h+angle_error*5; //×óÏÂ ÓÒÏÂ(·´) ÓÒÉÏ(·´) ×óÉÏ 
+	f_noww++;
+	return 0;
+}
 int motor_time(int x,int y,int z,int h,int time_c) //Éè¶¨¶àÉÙ´Î£¬²¢ÇÒ×Ô¶¯stage++
 {
 	if(f_noww>=time_c)
@@ -462,39 +693,54 @@ int motor_time(int x,int y,int z,int h,int time_c) //Éè¶¨¶àÉÙ´Î£¬²¢ÇÒ×Ô¶¯stage++
 	f_noww++;
 	return 0;
 }
-int angle_motor(int direction,int angle_d) //direction ×Ô¶¯stage++ 0Îª×ó 1ÎªÓÒ angleÕý¸º¶àÉÙ¶È Ðý×ª½Ç¶ÈÐ¡ÓÚ360¶È //×óÏÂ ÓÒÏÂ(·´) ÓÒÉÏ(·´) ×óÉÏ ºÍ½ÓÏßË³ÐòÓÐ¹Ø£¡£¡£¡£¡
+int angle_motor(int direction,int angle_d) //direction ×Ô¶¯stage++ 0Îª×ó 1ÎªÓÒ 2ÎªÌØ¶¨½Ç¶È angleÕý¸º¶àÉÙ¶È Ðý×ª½Ç¶ÈÐ¡ÓÚ360¶È //×óÏÂ ÓÒÏÂ(·´) ÓÒÉÏ(·´) ×óÉÏ ºÍ½ÓÏßË³ÐòÓÐ¹Ø£¡£¡£¡£¡
 {
 	if(f_noww==0)
 	{
-		if(direction==1){
-			Motor_Speed[0]=1500; Motor_Speed[1]=1500; Motor_Speed[2]=1500; Motor_Speed[3]=1500; 
+		if(direction==1)
+		{
 			angle_add=Yaw-angle_d;
 			if(angle_add<-180)
 				angle_add+=360;
-			}
-		else{
-			Motor_Speed[0]=-1500; Motor_Speed[1]=-1500; Motor_Speed[2]=-1500; Motor_Speed[3]=-1500; 
+		}
+		else
+		if(direction==0)
+		{
 			angle_add=Yaw+angle_d;
 			if(angle_add>180)
 				angle_add-=360;
-			}
+		}
+		else
+		if(direction==2)
+		{
+			angle_add=angle_d;
+		}
 		f_noww++;
 	}
 	else
 	{
 		float error_Y;
-		error_Y=Yaw-angle_add;
-		if(error_Y>2)
+		error_Y=angle_add-Yaw;
+		if(error_Y<-180)
+		{
+			error_Y+=360;
+		}
+		else
+		if(error_Y>180)
+		{
+			error_Y-=360;
+		}
+		if(error_Y<-1 )
+		{
+			Motor_Speed[0]=-1*error_Y; Motor_Speed[1]=-1*error_Y; Motor_Speed[2]=-1*error_Y; Motor_Speed[3]=-1*error_Y; //ÓÒ×ª
+		}
+		else
+		if(error_Y>1)
 		{
 			Motor_Speed[0]=-1*error_Y; Motor_Speed[1]=-1*error_Y; Motor_Speed[2]=-1*error_Y; Motor_Speed[3]=-1*error_Y; 
 		}
-		else
-		if(error_Y<-2)
-		{
-			Motor_Speed[0]=1*error_Y; Motor_Speed[1]=1*error_Y; Motor_Speed[2]=1*error_Y; Motor_Speed[3]=1*error_Y; 
-		}
 
-		if(abs(error_Y)<=2)
+		if(abs(error_Y)<=1)
 		{
 			Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0; 
 			Set_Motor(0,0,0,0);
@@ -513,6 +759,7 @@ int mode_change(int x)
 	send_mode[0]=0xaa;
 	send_mode[1]=0xff;
 	send_mode[2]=x;
+	send_mode[3]='\0';
 	UART_PutStr(USART3,send_mode);
 	memset(send_mode,0,sizeof(send_mode));
 	return 0;

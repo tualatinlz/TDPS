@@ -4,7 +4,8 @@
 #include "timer.h"	
 #include "ULN.h"
 
-unsigned int Distance1=0;
+float Distance1=0;  //改为float
+float Distance_last=0;
 
 unsigned char TimeOut_Flag1=0;
 
@@ -31,6 +32,7 @@ void Uln_Trig(void)
 
 void EXTI0_IRQHandler(void)
 {
+	Distance_last=Distance1;
 	Distance1=TIM7->CNT;//声速为340m/s,一个计数时间为10us,那么声音传播的距离为0.0034m,即0.34cm
 	Distance1=Distance1*17/100-20; //单位0.1cm
 	TimeOut_Flag1=0;

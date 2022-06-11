@@ -14,7 +14,7 @@ extern unsigned char LY;
 extern int Motor_Speed[4];	//电机速度
 extern unsigned char flag_RecFul;
 extern char redata[500];   // 定义接收数据变量数组
-
+extern unsigned int stage_now;
 uint16 UartRec[8]={1500,1500,1500,1500,1500,1500,1500,1500};
 int output_mv,output_mv2;
 unsigned int pwm_num;
@@ -32,7 +32,7 @@ int Is_Car_Front(const char *string)
 
 int Is_Car_Back(const char *string)
 {
-	if(strncmp(string,"<BDND>",6)==0 || strncmp(string,"BDND",4)==0)
+	if(string[2]==0xA2)
 		return TRUE;
 	else
 		return FALSE;	
@@ -40,7 +40,7 @@ int Is_Car_Back(const char *string)
 
 int Is_Car_Left(const char *string)
 {
-	if(strncmp(string,"<BLTD>",6)==0||strncmp(string,"BLTD",4)==0)
+	if(string[2]==0xA3)
 		return TRUE;
 	else
 		return FALSE;	
@@ -454,11 +454,10 @@ void Servor_parse(const char *str)
 
 void App_control(const char *str)  //UART control
 {
-
 	 if(Is_Car_Front(str))
 		{
 			//output_mv=str;
-			if(str[0]==0xAA && str[1]==0xff)
+			if(str[0]==0xAA && str[1]==0xff )
 			{
 				output_mv=str[3];
 				output_mv2=str[4];
@@ -475,11 +474,30 @@ void App_control(const char *str)  //UART control
 		}
 	else if(Is_Car_Back(str))
 		{	
-			
+			if(str[0]==0xAA && str[1]==0xff)
+			{
+				if ( stage_now==40 || stage_now==47)
+				{
+					stage_now++;
+					Set_Motor(0, 0, 0, 0);
+					Motor_Speed[0]=0; Motor_Speed[1]=0; Motor_Speed[2]=0; Motor_Speed[3]=0;
+				}
+				
+				
+			}
 		}
 	else if(Is_Car_Left(str))
 		{
-
+			if(str[0]==0xAA && str[1]==0xff )
+			{
+				Beep_Test();
+				if(str[3]==0x01)
+				stage_now=8; //左边 正方
+				if(str[3]==0x02)
+				stage_now=25; // 圆
+				if(str[3]==0x03) //三角
+				stage_now=18;  //
+			}
 		}
 	else if(Is_Car_Right(str))
 		{

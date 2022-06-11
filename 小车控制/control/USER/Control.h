@@ -35,7 +35,7 @@ extern int Motor_DrctAdj[4];		//电机转向调整
 
 extern PID PID_Motor[4];
 extern u8 ARMED;
-
+int mode_change(int x);
 void Car_Control(int X_Move,int Y_Move,int Yaw);
 float Get_MxMi(float num,float max,float min);
 void PID_Init(void);

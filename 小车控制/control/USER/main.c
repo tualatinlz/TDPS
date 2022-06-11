@@ -31,10 +31,11 @@ int main(void)
 	Set_Motor(0,0,0,0); 
 	Adc_Init();
 	Uln_init();								//超声波初始化
-	delay_ms(150);  			//必须延迟 不然I2C有问题
+	delay_ms(250);  			//必须延迟 不然I2C有问题
 	AnBT_DMP_MPU6050_Init();	//6050DMP初始化,不校准	
 	UI_Display_Flag=1;				//标记改变界面	
 	PS2_CH[0]=0;PS2_CH[1]=0;PS2_CH[2]=0;
+	mode_change(0xff);
 
 	while(Standby_Mode())	{	}	 //=====选择运行模式 
 	if(WorkMode==1)	PS2_Init();
@@ -44,7 +45,7 @@ int main(void)
 		OLED_Refresh_AllGDRAM(); 	//刷新显示
 		if(Control_Flag) //频率同 control中断
 		{	
-			Uln_Trig();	//发送超声波全局
+			
 			switch(WorkMode)
 			{
 	////////////////////待机模式////////////////////////

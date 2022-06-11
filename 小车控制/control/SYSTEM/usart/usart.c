@@ -256,7 +256,7 @@ void USART3_IRQHandler(void)                //串口中断接收数据储存在redata 连接o
 			redata[i]=Res;
 			i++;
 		
-		if(redata[i-1]=='\r'||redata[i-1]=='>'||i>500)
+		if(redata[i-1]==0xfe||i>500)  //不能发'\r'0x13'了
 		{
 		    redata[i] = 0;
 		    flag_RecFul=1;
