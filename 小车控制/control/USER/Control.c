@@ -148,15 +148,15 @@ void TIM6_IRQHandler(void)
 					angle_motor(1,89); //当前右转
 					break;
 				case 5:
-					delay_ms(5000);
-					stage_now++;
+					motor_time(0, 0, 0,0,2000);
+					
 					break;
 				case 6:
 					stage_now++;
 					break;
 				
 				case 7:
-					motor_time(100, -100, -100,100,1430);
+					motor_time(100, -100, -100,100,1330);
 					//motor_time(100, -100, -100,100,1670);//前进上桥  并自动stage++ //左下 右下(反) 右上(反) 左上 
 					break;
 				case 8:
@@ -164,8 +164,7 @@ void TIM6_IRQHandler(void)
 					angle_motor(0,93); //当前角度左转
 					break;
 				case 9:
-					delay_ms(5000);
-					stage_now++;
+					motor_time(0, 0, 0,0,2000);
 					break;
 				case 10:
 					motor_time(100, -100, -100,100,1400);  //到达拱门停下
@@ -208,7 +207,7 @@ void TIM6_IRQHandler(void)
 					break;
 				case 5:
 					mode_change(0x02);  //切换模式等
-					App_control_car(); //改stage
+					App_control_car(); //改stage 识别图像
 					break;
 				case 6:
 					
@@ -421,7 +420,7 @@ void TIM6_IRQHandler(void)
 					angle_motor(0,90);  //左转
 					break;
 				case 61:
-					motor_time(100, -100, -100,100,4000); //舵机设定 直走 准备发送
+					motor_time(100, -100, -100,100,4000); //走到底面区域
 					break;
 				case 62:
 					  	                        

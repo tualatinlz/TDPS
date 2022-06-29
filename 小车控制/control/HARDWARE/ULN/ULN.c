@@ -24,7 +24,7 @@ void Uln_init(void)
 void Uln_Trig(void)
 {
 	Trig=1;Delay_us(100);Trig=0;
-	if(TimeOut_Flag1)Distance1=500;
+	if(TimeOut_Flag1)Distance1=400;
 	TimeOut_Flag1=1;
 	TIM7->CNT=0;  			//设定计数器自动重装值 
 	TIM7->CR1|=0x01;    	//使能定时器3
